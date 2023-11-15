@@ -9,6 +9,7 @@ use App\Form\CommentFormType;
 use App\Form\PostFormType;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
@@ -67,16 +68,25 @@ class BlogController extends AbstractController
 
             return $this->redirectToRoute('blog');
         }
-        return $this->render('blog/new_post.html.twig', array(
-            'form' => $form->createView(),
-            'post' => $post
-        ));
+        return $this->render(
+            'blog/new_post.html.twig',
+            array(
+                'form' => $form->createView(),
+                'post' => $post
+            )
+        );
     }
 
     #[Route("/single_post/{slug}/like", name: 'post_like')]
-    public function like(ManagerRegistry $doctrine, $slug): Response
+    public function like(ManagerRegistry $doctrine, Request $request, $slug): Response
     {
-        return new Response("like");
+        $repository = $doctrine->getRepository(Post::class);
+        $post = $repository->findOneBy(['Slug' => $slug]);;
+        $likes = $post->getNumLikes();
+        $post->setNumLikes($likes + 1);
+        $entityManager = $doctrine->getManager();
+        $entityManager->flush();
+        return $this->redirectToRoute('single_post', ['slug' => $post->getSlug()]);
 
     }
 
@@ -86,6 +96,10 @@ class BlogController extends AbstractController
         $repository = $doctrine->getRepository(Post::class);
         $posts = $repository->findAll();
 
+        $recents = $repository->findBy([],['PublishedAt' => 'DESC'], 2);
+
+        
+
         return $this->render('blog/blog.html.twig', [
             'posts' => $posts,
         ]);
@@ -94,6 +108,37 @@ class BlogController extends AbstractController
     #[Route("/single_post/{slug}", name: 'single_post')]
     public function post(ManagerRegistry $doctrine, Request $request, $slug = 'cambiar'): Response
     {
-        return new Response("Single post");
+        $repository = $doctrine->getRepository(Post::class);
+        $post = $repository->findOneBy(['Slug' => $slug]);
+
+        
+        $recents = $repository->findBy([],['PublishedAt' => 'DESC'], 2);
+
+        $form = $this->createForm(CommentFormType::class);
+        $formPost = $this->createForm(PostFormType::class, $post);
+        $formPost->handleRequest($request);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $comment = $form->getData();
+            $postForm = $formPost->getData();
+
+            $comentarios = $postForm->getNumComments();
+            $comment->setPost($post);
+            $postForm->setNumComments($comentarios + 1);
+
+            $entityManager = $doctrine->getManager();
+            $entityManager->persist($postForm);
+            $entityManager->persist($comment);
+            $entityManager->flush();
+
+            return $this->redirectToRoute('single_post', ['slug' => $post->getSlug()]);
+        }
+
+        return $this->render('blog/single_post.html.twig', [
+            'post' => $post,
+            'recents' => $recents,
+            'commentForm' => $form->createView()
+        ]);
     }
+
 }

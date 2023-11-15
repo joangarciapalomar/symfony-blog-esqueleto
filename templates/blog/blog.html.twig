@@ -1,106 +1,112 @@
 {% extends 'base.html.twig' %}
-{% block title %}Blog{% endblock %}
+{% block title %}Blog
+{% endblock %}
 {% block body %}
-<!-- Principal Content Start -->
-   <div id="blog">
-     <div class="container">
-      <div class="row">
+	<!-- Principal Content Start -->
+	<div id="blog">
+		<div class="container">
+			<div
+				class="row">
 
-      <!-- Blocks of Posts -->
-        <div class="col-xs-12 col-sm-8 row">
-    {% for post in posts %}
-        <div class="col-xs-12 col-sm-12">
-            <div class="post">
-                <div class="post-heading">
-                    <span>{{ post.publishedAt|date("d F") }}</span>
-                    <img class="img-responsive" src="{{ asset('images/index/gallery/' ~ post.image) }}" alt="post's picture">
-                </div>
-                <div class="post-body">
-                    <h3><a href="{{ path('single_post', {'id': post.id}) }}"><strong>{{ post.title }}</strong></a></h3>
-                    <hr>
-                    <p>{{ post.content }}</p>
-                </div>
-                <div class="post-footer">
-                    <a class="btn" href="{{ path('single_post', {'id': post.id}) }}">READ MORE...</a>
-                    <span>
-                        <i class="fa fa-heart sr-icons"></i> {{ post.numLikes }}
-                        <i class="fa fa-comments sr-icons"></i> {{ post.numComments }}
-                    </span>
-                </div>
-            </div>
-        </div>
-    {% endfor %}
-    
-    <nav class="text-left">
-        <ul class="pagination">
-            <li class="active"><a href="#">1</a></li>
-            <li><a href="#">2</a></li>
-            <li><a href="#">3</a></li>
-            <li><a href="#" aria-label="suivant"><span aria-hidden="true">&raquo;</span></a></li>
-        </ul>
-    </nav>
-</div>
-      <!-- End of Blog Post -->  
+				<!-- Blocks of Posts -->
+				<div class="col-xs-12 col-sm-8 row">
+					{% for post in posts %}
+						<div class="col-xs-12 col-sm-12">
+							<div class="post">
+								<div class="post-heading">
+									<span>{{ post.publishedAt|date("d F") }}</span>
+									<img class="img-responsive" src="{{ asset('images/index/gallery/' ~ post.image) }}" alt="post's picture">
+								</div>
+								<div class="post-body">
+									<h3>
+										<a href="{{ path('single_post', {'id': post.id}) }}">
+											<strong>{{ post.title }}</strong>
+										</a>
+									</h3>
+									<hr>
+									<p>{{ post.content }}</p>
+								</div>
+								<div class="post-footer">
+									<a class="btn" href="{{ path('single_post', {'slug': post.slug}) }}">READ MORE...</a>
+									<span>
+										<i class="fa fa-heart sr-icons"></i>
+										{{ post.numLikes }}
+										<i class="fa fa-comments sr-icons"></i>
+										{{ post.numComments }}
+									</span>
+								</div>
+							</div>
+						</div>
+					{% endfor %}
 
-      <!-- Side bar -->  
-        <div class="col-xs-12 col-sm-4">
-          <form class="" action='{{ path('blog_buscar') }}'>
-              <input type="text" class="form-control" style="display:unset; width:85%" placeholder="Search" name='searchTerm'>
-              <button type='submit' class="btn btn-primary btn-danger"><i class="fa fa-search"></i>
-              </button>
-          </form>
-           <div class="panel">
-             <div class="panel-heading">
-               <h4>Categories</h4>
-             </div>
-             <div class="panel-body">
-               <ul class="nav">
-                 <li><a href="#">Category I</a></li>
-                 <li><a href="#">Category II</a></li>
-                 <li><a href="#">Category III</a></li>
-                 <li><a href="#">Category IV</a></li>
-                 <li class="last"><a href="#">Category V</a></li>
-               </ul>
-             </div>
-           </div>
-           <div class="well">
-             <h4>Soluta</h4>
-             <p>Quod soluta corrupti earum officia vel inventore vitae quidem, consequuntur odit impedit.</p>
-           </div>
-            <h3>Recent Posts</h3>
-            <hr>
-             <div class="post">
-               <div class="post-heading">
-                 <span>10 APRIL</span>
-                 <img class="img-responsive" src="images/blog/wedding.jpg" alt="post's picture">
-               </div>
-               <div class="post-body">
-                 <span>
-                 <i class="fa fa-heart sr-icons"></i> 10
-                 <i class="fa fa-comments sr-icons"></i> 10
-                 </span>
-                 <h4 class="text-left"><a href="{{path('single_post')}}"><strong>Aliquam soluta</strong></a></h4>
-               </div>
-             </div>
-             <div class="post">
-               <div class="post-heading">
-                 <span>12 MAY</span>
-                 <img class="img-responsive" src="images/blog/woman.jpg" alt="post's picture">
-               </div>
-               <div class="post-body">
-                 <span>
-                 <i class="fa fa-heart sr-icons"></i> 10
-                 <i class="fa fa-comments sr-icons"></i> 10
-                 </span>
-                 <h4 class="text-left"><a href="{{path('single_post')}}"><strong>Consequuntur</strong></a></h4>
-               </div>
-             </div>
-        </div>
-      <!-- End of Side bar --> 
-       
-      </div>
-     </div>
-   </div>
-<!-- End of Principal Content Start --> 
+					<nav class="text-left">
+						<ul class="pagination">
+							<li class="active">
+								<a href="#">1</a>
+							</li>
+							<li>
+								<a href="#">2</a>
+							</li>
+							<li>
+								<a href="#">3</a>
+							</li>
+							<li>
+								<a href="#" aria-label="suivant">
+									<span aria-hidden="true">&raquo;</span>
+								</a>
+							</li>
+						</ul>
+					</nav>
+				</div>
+				<!-- End of Blog Post -->
+
+				<!-- Side bar -->
+				<div class="col-xs-12 col-sm-4">
+					<form class="" action='{{ path('blog_buscar') }}'>
+						<input type="text" class="form-control" style="display:unset; width:85%" placeholder="Search" name='searchTerm'>
+						<button type='submit' class="btn btn-primary btn-danger">
+							<i class="fa fa-search"></i>
+						</button>
+					</form>
+					<div class="panel">
+						<div class="panel-heading">
+							<h4>Categories</h4>
+						</div>
+						<div class="panel-body">
+							<ul class="nav">
+								<li>
+									<a href="#">Category I</a>
+								</li>
+								<li>
+									<a href="#">Category II</a>
+								</li>
+								<li>
+									<a href="#">Category III</a>
+								</li>
+								<li>
+									<a href="#">Category IV</a>
+								</li>
+								<li class="last">
+									<a href="#">Category V</a>
+								</li>
+							</ul>
+						</div>
+					</div>
+					<div class="well">
+						<h4>Soluta</h4>
+						<p>Quod soluta corrupti earum officia vel inventore vitae quidem, consequuntur odit impedit.</p>
+					</div>
+					<h3>Recent Posts</h3>
+					<hr>
+					{% for recent in recents %}
+						{{ include ('recents.html.twig', {'recent': recent}) }}
+					{% endfor %}
+				</div>
+				<!-- End of Side bar -->
+
+			</div>
+		</div>
+	</div>
+	<!-- End of Principal Content Start -->
 
 {% endblock %}
