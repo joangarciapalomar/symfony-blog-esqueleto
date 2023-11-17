@@ -21,7 +21,17 @@ class BlogController extends AbstractController
     #[Route("/blog/buscar/{page}", name: 'blog_buscar')]
     public function buscar(ManagerRegistry $doctrine, Request $request, int $page = 1): Response
     {
-        return new Response("Buscar");
+        $repository = $doctrine->getRepository(Post::class);
+        $searchTerm = $request->query->get('searchTerm') ?? "";
+        $posts = $repository->findByTextPaginated($page, $searchTerm);
+        
+        
+        $recents = $repository->findBy([],['PublishedAt' => 'DESC'], 2);
+
+        return $this->render('blog/blog.html.twig', [
+            'posts' => $posts,
+            'recents' => $recents,
+        ]);
     }
 
     #[Route("/blog/new", name: 'new_post')]
@@ -90,20 +100,21 @@ class BlogController extends AbstractController
 
     }
 
-    #[Route("/blog", name: 'blog')]
-    public function index(ManagerRegistry $doctrine): Response
+    #[Route("/blog/{page}", name: 'blog')]
+    public function index(ManagerRegistry $doctrine, int $page = 1): Response
     {
         $repository = $doctrine->getRepository(Post::class);
-        $posts = $repository->findAll();
-
+        $posts = $repository->findAllPaginated($page);
         $recents = $repository->findBy([],['PublishedAt' => 'DESC'], 2);
 
-        
+
 
         return $this->render('blog/blog.html.twig', [
             'posts' => $posts,
+            'recents' => $recents,
         ]);
     }
+
 
     #[Route("/single_post/{slug}", name: 'single_post')]
     public function post(ManagerRegistry $doctrine, Request $request, $slug = 'cambiar'): Response

@@ -10,52 +10,42 @@
 
 				<!-- Blocks of Posts -->
 				<div class="col-xs-12 col-sm-8 row">
-					{% for post in posts %}
-						<div class="col-xs-12 col-sm-12">
-							<div class="post">
-								<div class="post-heading">
-									<span>{{ post.publishedAt|date("d F") }}</span>
-									<img class="img-responsive" src="{{ asset('images/index/gallery/' ~ post.image) }}" alt="post's picture">
-								</div>
-								<div class="post-body">
-									<h3>
-										<a href="{{ path('single_post', {'id': post.id}) }}">
-											<strong>{{ post.title }}</strong>
-										</a>
-									</h3>
-									<hr>
-									<p>{{ post.content }}</p>
-								</div>
-								<div class="post-footer">
-									<a class="btn" href="{{ path('single_post', {'slug': post.slug}) }}">READ MORE...</a>
-									<span>
-										<i class="fa fa-heart sr-icons"></i>
-										{{ post.numLikes }}
-										<i class="fa fa-comments sr-icons"></i>
-										{{ post.numComments }}
-									</span>
-								</div>
-							</div>
-						</div>
+					{% for post in posts.results %}
+						{{ include ('partials/post.html.twig', {'post': post}) }}
 					{% endfor %}
 
+
 					<nav class="text-left">
-						<ul class="pagination">
-							<li class="active">
-								<a href="#">1</a>
-							</li>
-							<li>
-								<a href="#">2</a>
-							</li>
-							<li>
-								<a href="#">3</a>
-							</li>
-							<li>
-								<a href="#" aria-label="suivant">
-									<span aria-hidden="true">&raquo;</span>
-								</a>
-							</li>
-						</ul>
+						{% if (app.request.attributes.get('_route') == 'blog') %}
+	{% if posts.hasToPaginate %}
+		//Código anterior
+	{% endif %}
+{% else %}
+	{% if posts.hasToPaginate %}
+		<div class="text-left">
+		  <ul class="pagination">
+		      {% if posts.hasPreviousPage %}
+		          <li class="prev"><a href="{{ path('blog_buscar', {page: posts.previousPage}) }}?searchTerm={{searchTerm}}" rel="previous"><i class="fa fw fa-long-arrow-left"></i> Previous</a></li>
+		      {% else %}
+		          <li class="prev disabled"><span><i class="fa fw fa-arrow-left"></i> Previous </span></li>
+		      {% endif %}
+		      {% for i in 1..posts.lastPage %}
+		          {% if i == posts.currentPage %}
+		              <li class="active"><span>{{ i }}</span></li>
+		          {% else %}
+		              <li><a href="{{ path('blog_buscar', {page: i}) }}?searchTerm={{searchTerm}}">{{ i }}</a></li>
+		          {% endif %}
+		      {% endfor %}
+		      {% if posts.hasNextPage %}
+		          <li class="next"><a href="{{ path('blog_buscar', {page: posts.nextPage}) }}?searchTerm={{searchTerm}}" rel="next">Next <i class="fa fw fa-arrow-right"></i></a></li>
+		      {% else %}
+		          <li class="next disabled"><span>Next <i class="fa fw fa-arrow-right"></i></span></li>
+		      {% endif %}
+		  </ul>
+	      </div>
+	{% endif %}
+{% endif %}
+
 					</nav>
 				</div>
 				<!-- End of Blog Post -->
@@ -99,7 +89,7 @@
 					<h3>Recent Posts</h3>
 					<hr>
 					{% for recent in recents %}
-						{{ include ('recents.html.twig', {'recent': recent}) }}
+						{{ include ('blog/recents.html.twig', {'recent': recent}) }}
 					{% endfor %}
 				</div>
 				<!-- End of Side bar -->

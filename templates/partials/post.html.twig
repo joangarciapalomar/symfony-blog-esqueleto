@@ -2,7 +2,7 @@
     <div class="post">
     <div class="post-heading">
         <span>{{ post.publishedAt | date('d') }} {{ post.publishedAt | date('F') }}</span>
-        <img class="img-responsive" src="{{ asset('images/blog/' ~ post.image) }}" alt="{{post.title}}">
+        <img class="img-responsive" src="{{ asset('images/index/gallery/' ~ post.image) }}" alt="{{post.title}}">
     </div>
     <div class="post-body">
         <h3><a href="{{ path('single_post', {'slug':post.slug}) }}"><strong>{{post.title}}</strong></a></h3>
